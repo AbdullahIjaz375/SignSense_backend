@@ -1,10 +1,14 @@
-const express = require('express')
-const jwt = require('jsonwebtoken')
+const express = require('express');
+const jwt = require('jsonwebtoken');
 const router = express.Router();
-const authController = require('../controllers/auth')
 
-router.put('/sign-up', authController.signUp)
+// Import the 'upload' middleware from the 'index.js' file
+const { upload } = require('../index');
 
-router.post('/login', authController.login)
+const authController = require('../controllers/auth');
+
+router.post('/sign-up', upload.single('image'), authController.signUp);
+
+router.post('/login', authController.login);
 
 module.exports = router;

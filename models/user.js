@@ -20,8 +20,19 @@ const userSchema = new Schema({
         required: true
     },
     profilePhoto: {
-        type: String
-    }
+        type: String,
+        required: true
+    },
+    isOnline: {
+        type: String,
+        default: '0'
+    },
+    friends: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }]
+}, {
+    timestamps: true
 });
 
 // Hash the password before saving it to the database

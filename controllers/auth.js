@@ -2,9 +2,12 @@ const express = require('express')
 const jwt = require('jsonwebtoken')
 const User = require('../models/user')
 const bcrypt = require('bcrypt');
+const sgMail = require('@sendgrid/mail')
+const multer = require('multer')
+const isAuth = require('../middleware/isAuth');
 
 async function signUp(req, res) {
-    const { email, name, password, profilePhoto } = req.body;
+    const { email, name, password } = req.body;
 
     try {
 
@@ -17,10 +20,10 @@ async function signUp(req, res) {
 
         // Create a new user
         const newUser = new User({
-            email,
-            name,
-            password,
-            profilePhoto
+            email: email,
+            name: name,
+            password: password,
+            profilePhoto: 'images/' + req.file.filename
         });
 
         // Save the new user to the database
@@ -32,6 +35,7 @@ async function signUp(req, res) {
         res.status(500).json({ message: 'Internal server error.' });
     }
 };
+
 
 async function login(req, res) {
     try {
@@ -51,7 +55,7 @@ async function login(req, res) {
         if (isPasswordMatch) {
             const token = jwt.sign(
                 { userId: foundUser._id, email: foundUser.email },
-                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.i6c6Nlqrx_otpp3vRv07wEsKcy6uJJr-3TDNsMvq52E',  // Replace with your secret key
+                process.env.JWT_SECRET,  // Replace with your secret key
                 { expiresIn: '1h' }
             );
 
