@@ -10,8 +10,4 @@ router.post("/add-friend", dashboardController.addFriend);
 
 router.get("/:userEmail", dashboardController.loadUsers);
 
-router.get("/", (req, res) => {
-  console.log("Default route");
-});
-
 module.exports = router;

@@ -1,4 +1,3 @@
-const express = require("express");
 const User = require("../models/user");
 
 async function loadUsers(req, res) {

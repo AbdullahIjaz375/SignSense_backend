@@ -3,6 +3,8 @@ const express = require("express");
 const mongoose = require("mongoose");
 const path = require("path");
 const multer = require("multer");
+const http = require("http"); // Require http module for Socket.io
+const { initializeSocket } = require("./middleware/SocketMiddleware"); // Import the socket middleware
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -36,12 +38,20 @@ const upload = multer({ storage: storage });
 
 module.exports.upload = upload;
 
+// Create HTTP server
+const server = http.createServer(app);
+
+// Initialize Socket.io middleware
+initializeSocket(server, app);
+
 // Routes
 const authRoutes = require("./routes/auth");
 const dashboardRoutes = require("./routes/dashboard");
+const chatRoutes = require("./routes/chats");
 
 app.use("/auth", authRoutes);
 app.use("/dashboard", dashboardRoutes);
+app.use("/chats", chatRoutes);
 
 // Default route
 app.get("/", (req, res) => {
@@ -49,6 +59,6 @@ app.get("/", (req, res) => {
 });
 
 // Start the server
-app.listen(port, () => {
+server.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`);
 });
