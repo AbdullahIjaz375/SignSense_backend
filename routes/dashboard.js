@@ -4,10 +4,10 @@ const isAuth = require("../middleware/isAuth");
 
 const dashboardController = require("../controllers/dashboard");
 
-router.get("/load-users", dashboardController.loadUsers);
-
 router.post("/add-friend", dashboardController.addFriend);
 
-router.get("/:userEmail", dashboardController.loadUsers);
+router.get("/load-friends/:userEmail", dashboardController.loadFriends);
+
+router.post("/remove-friend", dashboardController.removeFriend);
 
 module.exports = router;

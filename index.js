@@ -48,10 +48,14 @@ initializeSocket(server, app);
 const authRoutes = require("./routes/auth");
 const dashboardRoutes = require("./routes/dashboard");
 const chatRoutes = require("./routes/chats");
+const userRoutes = require("./routes/user");
+const messagesRoutes = require("./routes/message");
 
 app.use("/auth", authRoutes);
 app.use("/dashboard", dashboardRoutes);
 app.use("/chats", chatRoutes);
+app.use("/user", userRoutes);
+app.use("/messages", messagesRoutes);
 
 // Default route
 app.get("/", (req, res) => {

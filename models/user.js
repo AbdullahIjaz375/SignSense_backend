@@ -26,7 +26,7 @@ const userSchema = new Schema(
     },
     isOnline: {
       type: String,
-      default: "0",
+      default: "Offline",
     },
     friends: [
       {

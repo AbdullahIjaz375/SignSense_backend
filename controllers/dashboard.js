@@ -1,10 +1,9 @@
 const User = require("../models/user");
 
-async function loadUsers(req, res) {
+async function loadFriends(req, res) {
   try {
-    const userEmail = req.query.userEmail;
+    const userEmail = req.params.userEmail;
 
-    // Find the user by email
     const user = await User.findOne({ email: userEmail }).populate("friends");
 
     if (!user) {
@@ -29,7 +28,6 @@ async function addFriend(req, res) {
   try {
     const { userEmail, friendEmail } = req.body;
 
-    // Find the user and friend by email
     const user = await User.findOne({ email: userEmail });
     const friend = await User.findOne({ email: friendEmail });
 
@@ -37,12 +35,10 @@ async function addFriend(req, res) {
       return res.status(404).json({ message: "User or friend not found." });
     }
 
-    // Check if the friend is already in the user's friends list
     if (user.friends.includes(friend._id)) {
       return res.status(400).json({ message: "User is already a friend." });
     }
 
-    // Add the friend to the user's friends list
     user.friends.push(friend._id);
     await user.save();
 
@@ -51,12 +47,46 @@ async function addFriend(req, res) {
       data: { user, friend },
     });
   } catch (error) {
-    console.error(error);
+    return res.status(500).json({ message: "Internal server error." });
+  }
+}
+
+async function removeFriend(req, res) {
+  try {
+    const { userEmail, friendEmail } = req.body;
+
+    const user = await User.findOne({ email: userEmail });
+    const friend = await User.findOne({ email: friendEmail });
+
+    if (!user || !friend) {
+      return res.status(404).json({ message: "User or friend not found." });
+    }
+
+    const friendIndex = user.friends.findIndex(
+      (f) => f.toString() === friend._id.toString()
+    );
+
+    if (friendIndex === -1) {
+      return res
+        .status(400)
+        .json({ message: "This user is not added as a friend." });
+    }
+
+    user.friends.splice(friendIndex, 1);
+
+    await user.save();
+
+    return res
+      .status(200)
+      .json({ message: "Friend removed successfully.", data: user });
+  } catch (error) {
+    console.error("Error removing friend:", error);
     return res.status(500).json({ message: "Internal server error." });
   }
 }
 
 module.exports = {
-  loadUsers,
+  loadFriends,
   addFriend,
+  removeFriend,
 };
