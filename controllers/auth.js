@@ -6,7 +6,8 @@ const multer = require("multer");
 const isAuth = require("../middleware/isAuth");
 
 async function signUp(req, res) {
-  const { email, name, password } = req.body;
+  const { email, name, password, accountType, signLanguagePreference } =
+    req.body;
 
   try {
     // Check if email is already taken
@@ -21,7 +22,9 @@ async function signUp(req, res) {
       email: email,
       name: name,
       password: password,
-      profilePhoto: "images/" + req.file.filename,
+      accountType: accountType,
+      signLanguagePreference:
+        accountType === "2" ? null : signLanguagePreference,
     });
 
     // Save the new user to the database

@@ -6,13 +6,19 @@ async function loadChat(req, res) {
   try {
     const chatId = req.params.chatId;
 
-    const chat = await Chat.findById(chatId);
+    const messages = await Message.find({ chatId: chatId })
+      .select("-__v")
+      .lean();
 
-    if (!chat) {
-      return res.status(404).json({ message: "No previous chats found" });
-    }
+    // Modify each message object to change 'sender' to 'senderId'
+    messages.forEach((message) => {
+      message.senderId = message.sender;
+      delete message.sender;
+    });
 
-    return res.status(200).json({ message: "Previous Chat found", chat: chat });
+    return res
+      .status(200)
+      .json({ message: "Messages for the chat found", data: messages });
   } catch (error) {
     return res
       .status(500)
@@ -33,8 +39,8 @@ async function deleteChat(req, res) {
 
     await Chat.findByIdAndDelete(chatId);
 
-    const io = req.app.get("io");
-    io.emit("chatDeleted", { chatId, deletedMessages });
+    // const io = req.app.get("io");
+    // io.emit("chatDeleted", { chatId, deletedMessages });
 
     return res.status(200).json({
       message: "Chat and associated messages deleted successfully",

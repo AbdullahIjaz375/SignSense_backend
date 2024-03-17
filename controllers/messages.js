@@ -13,12 +13,11 @@ async function sendMessage(req, res) {
 
     let chat;
     if (chatId) {
-      chat = await Chat.findById(chatId).populate("users");
+      chat = await Chat.findById(chatId);
       if (!chat) {
         return res.status(404).json({ message: "Chat not found" });
       }
     } else {
-      // If chatId is not provided, find or create a chat based on sender and receiver emails
       const receivers = await User.find({ email: { $in: receiverEmails } });
       if (!receivers || receivers.length !== receiverEmails.length) {
         return res
@@ -29,7 +28,7 @@ async function sendMessage(req, res) {
       const receiverIds = receivers.map((receiver) => receiver._id);
       chat = await Chat.findOne({
         users: { $all: [sender._id, ...receiverIds] },
-      }).populate("users");
+      });
 
       if (!chat) {
         chat = await Chat.create({
@@ -48,12 +47,9 @@ async function sendMessage(req, res) {
     chat.messages.push(newMessage);
     await chat.save();
 
-    const io = req.app.get("io");
-    chat.users.forEach((user) => {
-      io.emit(`message:${user._id}`, { senderId: sender._id, message });
-    });
-
-    res.status(200).json({ message: "Message sent successfully", data: chat });
+    res
+      .status(200)
+      .json({ message: "Message sent successfully", data: chat.messages });
   } catch (error) {
     res
       .status(500)
@@ -86,8 +82,8 @@ async function updateMessage(req, res) {
       return res.status(404).json({ message: "Chat not found" });
     }
 
-    const io = req.app.get("io");
-    io.emit("messageUpdated", { updatedMessage, updatedChat });
+    // const io = req.app.get("io");
+    // io.emit("messageUpdated", { updatedMessage, updatedChat });
 
     return res.status(200).json({
       message: "Message and chat updated successfully",
@@ -122,8 +118,8 @@ async function deleteMessage(req, res) {
       return res.status(404).json({ message: "Chat not found" });
     }
 
-    const io = req.app.get("io");
-    io.emit("messageDeleted", { messageId, chatId });
+    // const io = req.app.get("io");
+    // io.emit("messageDeleted", { messageId, chatId });
 
     return res.status(200).json({
       message: "Message deleted successfully",

@@ -20,9 +20,8 @@ const userSchema = new Schema(
       type: String,
       required: true,
     },
-    profilePhoto: {
+    profilePic: {
       type: String,
-      required: true,
     },
     isOnline: {
       type: String,
@@ -34,13 +33,21 @@ const userSchema = new Schema(
         ref: "User",
       },
     ],
+    signLanguagePreference: {
+      type: String,
+      enum: ["PSL", "ASL", null],
+      default: null,
+    },
+    accountType: {
+      type: String,
+      enum: ["1", "2"],
+    },
   },
   {
     timestamps: true,
   }
 );
 
-// Hash the password before saving it to the database
 userSchema.pre("save", async function (next) {
   try {
     const salt = await bcrypt.genSalt(10);

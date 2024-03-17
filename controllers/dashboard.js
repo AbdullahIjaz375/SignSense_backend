@@ -2,7 +2,7 @@ const User = require("../models/user");
 
 async function loadFriends(req, res) {
   try {
-    const userEmail = req.params.userEmail;
+    const userEmail = req.query.userEmail;
 
     const user = await User.findOne({ email: userEmail }).populate("friends");
 
@@ -44,7 +44,7 @@ async function addFriend(req, res) {
 
     return res.status(200).json({
       message: "Friend added successfully.",
-      data: { user, friend },
+      data: friend,
     });
   } catch (error) {
     return res.status(500).json({ message: "Internal server error." });
@@ -78,7 +78,7 @@ async function removeFriend(req, res) {
 
     return res
       .status(200)
-      .json({ message: "Friend removed successfully.", data: user });
+      .json({ message: "Friend removed successfully.", data: friend });
   } catch (error) {
     console.error("Error removing friend:", error);
     return res.status(500).json({ message: "Internal server error." });

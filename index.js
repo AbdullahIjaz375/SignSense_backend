@@ -42,7 +42,7 @@ module.exports.upload = upload;
 const server = http.createServer(app);
 
 // Initialize Socket.io middleware
-initializeSocket(server, app);
+// initializeSocket(server, app);
 
 // Routes
 const authRoutes = require("./routes/auth");
