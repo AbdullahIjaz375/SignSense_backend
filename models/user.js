@@ -22,6 +22,7 @@ const userSchema = new Schema(
     },
     profilePic: {
       type: String,
+      default: "/images/default-profile-photo.png",
     },
     isOnline: {
       type: String,
@@ -41,6 +42,10 @@ const userSchema = new Schema(
     accountType: {
       type: String,
       enum: ["1", "2"],
+    },
+    description: {
+      type: String,
+      default: "",
     },
   },
   {

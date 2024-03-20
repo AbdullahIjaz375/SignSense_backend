@@ -72,9 +72,68 @@ async function changeOnlineStatus(req, res) {
   }
 }
 
+async function getUserById(req, res) {
+  try {
+    const userId = req.query.userId;
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    return res.status(200).json({ message: "User found", data: user });
+  } catch (error) {
+    return res.status(500).json({ message: "Internal server error." });
+  }
+}
+
+async function getLoggedInUser(req, res) {
+  try {
+    const user = req.user;
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    return res
+      .status(200)
+      .json({ message: "Logged-in user found", data: user });
+  } catch (error) {
+    return res.status(500).json({ message: "Internal server error." });
+  }
+}
+
+async function setUserDescription(req, res) {
+  try {
+    const { description } = req.body;
+    const userEmail = req.user.email;
+
+    const user = await User.findOne({ email: userEmail });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    user.description = description;
+
+    await user.save();
+
+    return res
+      .status(200)
+      .json({ message: "Description updated successfully", data: user });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+}
+
 module.exports = {
   getUser,
   deleteUser,
   isOnline,
   changeOnlineStatus,
+  getUserById,
+  getLoggedInUser,
+  setUserDescription,
 };

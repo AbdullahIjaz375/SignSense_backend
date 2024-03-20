@@ -1,8 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const messageController = require("../controllers/messages");
+const { upload } = require("../index");
 
-router.post("/send", messageController.sendMessage);
+router.post("/send", upload.single("chatPhoto"), messageController.sendMessage);
 
 router.post("/update", messageController.updateMessage);
 

@@ -10,14 +10,16 @@ async function signUp(req, res) {
     req.body;
 
   try {
-    // Check if email is already taken
     const existingUser = await User.findOne({ email });
 
     if (existingUser) {
       return res.status(400).json({ message: "Email is already taken." });
     }
 
-    // Create a new user
+    const defaultProfilePic = "/images/default-profile-pic.jpg";
+
+    const profilePic = req.file ? req.file.path : defaultProfilePic;
+
     const newUser = new User({
       email: email,
       name: name,
@@ -25,6 +27,7 @@ async function signUp(req, res) {
       accountType: accountType,
       signLanguagePreference:
         accountType === "2" ? null : signLanguagePreference,
+      profilePic: profilePic,
     });
 
     // Save the new user to the database
@@ -58,7 +61,7 @@ async function login(req, res) {
       const token = jwt.sign(
         { userId: foundUser._id, email: foundUser.email },
         process.env.JWT_SECRET,
-        { expiresIn: "1h" }
+        { expiresIn: "14w" }
       );
 
       const loadedUser = { foundUser, token };

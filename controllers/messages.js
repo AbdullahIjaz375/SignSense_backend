@@ -4,7 +4,8 @@ const Message = require("../models/message");
 
 async function sendMessage(req, res) {
   try {
-    const { senderEmail, receiverEmails, chatId, message } = req.body;
+    const { senderEmail, receiverEmails, chatId, message, chatName } = req.body;
+    const chatPhoto = req.file;
 
     const sender = await User.findOne({ email: senderEmail });
     if (!sender) {
@@ -12,6 +13,7 @@ async function sendMessage(req, res) {
     }
 
     let chat;
+
     if (chatId) {
       chat = await Chat.findById(chatId);
       if (!chat) {
@@ -26,14 +28,23 @@ async function sendMessage(req, res) {
       }
 
       const receiverIds = receivers.map((receiver) => receiver._id);
+
       chat = await Chat.findOne({
         users: { $all: [sender._id, ...receiverIds] },
       });
 
       if (!chat) {
+        const chatNameToSet =
+          receiverIds.length === 1 ? receivers[0].name : chatName;
+        const chatPhotoPath = chatPhoto
+          ? chatPhoto.path
+          : "/images/default-group-photo.jpg";
+
         chat = await Chat.create({
+          chatName: chatNameToSet,
           users: [sender._id, ...receiverIds],
           messages: [],
+          chatPhoto: chatPhotoPath,
         });
       }
     }
