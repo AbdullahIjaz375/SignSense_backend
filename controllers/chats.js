@@ -74,6 +74,7 @@ async function loadAllChats(req, res) {
     }
 
     const formattedChats = chats.map((chat) => ({
+      chatId: chat._id,
       chatName: chat.chatName,
       chatPhoto: chat.chatPhoto,
       latestMessage:
@@ -110,6 +111,7 @@ async function searchChat(req, res) {
           ? chat.messages[chat.messages.length - 1]
           : null;
       return {
+        chatId: chat._id,
         chatName: chat.chatName,
         chatPhoto: chat.chatPhoto,
         latestMessage: latestMessage
@@ -132,9 +134,128 @@ async function searchChat(req, res) {
   }
 }
 
+async function createChat(req, res) {
+  try {
+    const senderId = req.user.userId;
+
+    const { receiverId } = req.params;
+
+    const receiver = await User.findById(receiverId);
+
+    if (!receiver) {
+      return res.status(404).json({ message: "Receiver user not found" });
+    }
+
+    const chatName = receiver.name;
+    const chatPhoto = receiver.profilePic;
+
+    const existingChat = await Chat.findOne({
+      users: { $all: [senderId, receiverId], $size: 2 },
+    });
+
+    if (existingChat) {
+      return res
+        .status(400)
+        .json({ error: "Chat already exists with this user" });
+    }
+
+    const newChat = new Chat({
+      chatName: chatName,
+      users: [senderId, receiverId],
+      chatPhoto: chatPhoto,
+    });
+
+    await newChat.save();
+
+    const responseData = {
+      chatName: newChat.chatName,
+      users: newChat.users.filter((userId) => userId !== senderId),
+      chatPhoto: newChat.chatPhoto,
+      _id: newChat._id,
+      __v: newChat.__v,
+    };
+
+    res
+      .status(200)
+      .json({ message: "Chat created successfully", data: responseData });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Internal Server Error", error: error.message });
+  }
+}
+
+async function createGroupChat(req, res) {
+  try {
+    const senderId = req.user.userId;
+
+    const { chatName, receiverIds } = req.body;
+    const chatPhoto = req.file.path;
+
+    if (!chatName || !chatPhoto) {
+      return res
+        .status(400)
+        .json({ error: "Chat name and chat photo are required" });
+    }
+
+    if (!Array.isArray(receiverIds) || receiverIds.length < 2) {
+      return res.status(400).json({
+        error:
+          "User IDs should be provided as an array with at least two elements",
+      });
+    }
+
+    const users = await User.find({ _id: { $in: receiverIds } });
+    if (users.length !== receiverIds.length) {
+      return res
+        .status(400)
+        .json({ error: "One or more provided user IDs do not exist" });
+    }
+
+    receiverIds.push(senderId);
+
+    const existingChat = await Chat.findOne({ users: { $all: receiverIds } });
+    if (existingChat) {
+      return res
+        .status(400)
+        .json({ error: "Chat already exists for this set of users" });
+    }
+
+    const existingChatsWithSameUsers = await Chat.findOne({
+      users: { $all: receiverIds, $size: receiverIds.length },
+    });
+    if (existingChatsWithSameUsers) {
+      return res
+        .status(400)
+        .json({ error: "Chat already exists with the same set of users" });
+    }
+
+    const newChat = new Chat({
+      chatName: chatName,
+      users: receiverIds,
+      chatPhoto: chatPhoto,
+    });
+
+    await newChat.save();
+
+    const responseReceiverIds = receiverIds.filter((id) => id !== senderId);
+
+    res.status(200).json({
+      message: "Group chat created successfully",
+      data: { chatName, users: responseReceiverIds, chatPhoto },
+    });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Internal Server Error", error: error.message });
+  }
+}
+
 module.exports = {
   loadChat,
   deleteChat,
   loadAllChats,
   searchChat,
+  createChat,
+  createGroupChat,
 };

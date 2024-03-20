@@ -4,8 +4,7 @@ const Message = require("../models/message");
 
 async function sendMessage(req, res) {
   try {
-    const { senderEmail, receiverEmails, chatId, message, chatName } = req.body;
-    const chatPhoto = req.file;
+    const { senderEmail, receiverEmails, chatId, message } = req.body;
 
     const sender = await User.findOne({ email: senderEmail });
     if (!sender) {
@@ -34,17 +33,9 @@ async function sendMessage(req, res) {
       });
 
       if (!chat) {
-        const chatNameToSet =
-          receiverIds.length === 1 ? receivers[0].name : chatName;
-        const chatPhotoPath = chatPhoto
-          ? chatPhoto.path
-          : "/images/default-group-photo.jpg";
-
-        chat = await Chat.create({
-          chatName: chatNameToSet,
-          users: [sender._id, ...receiverIds],
-          messages: [],
-          chatPhoto: chatPhotoPath,
+        return res.status(400).json({
+          message:
+            "Create a group chat or chat with the users to send messages",
         });
       }
     }

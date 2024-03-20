@@ -30,12 +30,16 @@ async function signUp(req, res) {
       profilePic: profilePic,
     });
 
-    // Save the new user to the database
     await newUser.save();
 
-    res
-      .status(200)
-      .json({ message: "User created successfully.", data: newUser });
+    const token = jwt.sign({ userId: newUser._id }, "your_secret_key", {
+      expiresIn: "1h",
+    });
+
+    res.status(200).json({
+      message: "User created successfully.",
+      data: { User: newUser.toObject(), token },
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error." });
@@ -44,17 +48,14 @@ async function signUp(req, res) {
 
 async function login(req, res) {
   try {
-    // Extract user credentials from the request body
     const { email, password } = req.body;
 
-    // Find the user by email
     const foundUser = await User.findOne({ email });
 
     if (!foundUser) {
       return res.status(401).json({ error: "Invalid credentials" });
     }
 
-    // Compare the entered password with the stored hashed password
     const isPasswordMatch = await bcrypt.compare(password, foundUser.password);
 
     if (isPasswordMatch) {
@@ -64,14 +65,14 @@ async function login(req, res) {
         { expiresIn: "14w" }
       );
 
-      const loadedUser = { foundUser, token };
-      res.status(200).json({ message: "Login successful", data: loadedUser });
+      res.status(200).json({
+        message: "Login successful",
+        data: { User: foundUser, token },
+      });
     } else {
-      // Passwords do not match
       res.status(401).json({ error: "Invalid password" });
     }
   } catch (error) {
-    // Handle errors
     res.status(500).json({ error: error.message });
   }
 }
