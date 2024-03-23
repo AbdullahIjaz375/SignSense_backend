@@ -21,4 +21,6 @@ router.post(
   chatController.createGroupChat
 );
 
+router.get("/get-chat-data", chatController.getChatData);
+
 module.exports = router;

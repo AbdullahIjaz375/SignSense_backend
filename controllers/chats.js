@@ -251,6 +251,26 @@ async function createGroupChat(req, res) {
   }
 }
 
+async function getChatData(req, res) {
+  try {
+    const { chatId } = req.query;
+
+    const chat = await Chat.findById(chatId);
+
+    if (!chat) {
+      return res
+        .status(404)
+        .json({ message: "No chat found for this chat ID" });
+    }
+
+    res.status(200).json({ message: "Chat found.", data: chat });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Internal Server Error", error: error.message });
+  }
+}
+
 module.exports = {
   loadChat,
   deleteChat,
@@ -258,4 +278,5 @@ module.exports = {
   searchChat,
   createChat,
   createGroupChat,
+  getChatData,
 };
