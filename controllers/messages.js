@@ -4,9 +4,9 @@ const Message = require("../models/message");
 
 async function sendMessage(req, res) {
   try {
-    const { senderEmail, receiverEmails, chatId, message } = req.body;
+    const { senderId, receiverIds, chatId, message } = req.body;
 
-    const sender = await User.findOne({ email: senderEmail });
+    const sender = await User.findById(senderId);
     if (!sender) {
       return res.status(404).json({ message: "Sender not found" });
     }
@@ -19,17 +19,16 @@ async function sendMessage(req, res) {
         return res.status(404).json({ message: "Chat not found" });
       }
     } else {
-      const receivers = await User.find({ email: { $in: receiverEmails } });
-      if (!receivers || receivers.length !== receiverEmails.length) {
+      // Find users by their IDs instead of emails
+      const receivers = await User.find({ _id: { $in: receiverIds } });
+      if (!receivers || receivers.length !== receiverIds.length) {
         return res
           .status(404)
           .json({ message: "One or more receivers not found" });
       }
 
-      const receiverIds = receivers.map((receiver) => receiver._id);
-
       chat = await Chat.findOne({
-        users: { $all: [sender._id, ...receiverIds] },
+        users: { $all: [senderId, ...receiverIds] },
       });
 
       if (!chat) {
@@ -41,7 +40,7 @@ async function sendMessage(req, res) {
     }
 
     const newMessage = await Message.create({
-      sender: sender._id,
+      sender: senderId,
       content: message,
       chatId: chat._id,
     });
