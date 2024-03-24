@@ -1,4 +1,5 @@
 const User = require("../models/user");
+const sendResponse = require("../utils/responseFormatter");
 
 async function getUser(req, res) {
   try {
@@ -7,12 +8,13 @@ async function getUser(req, res) {
     const user = await User.findOne({ email: userEmail });
 
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      sendResponse(res, 404, null, "User not found.");
+      return;
     }
 
-    return res.status(200).json({ message: "User found", data: user });
+    sendResponse(res, 200, user, "User profile retrieved successfully.");
   } catch (error) {
-    return res.status(500).json({ message: "Internal server error." });
+    sendResponse(res, 500, null, error.message);
   }
 }
 
@@ -23,12 +25,13 @@ async function deleteUser(req, res) {
     const user = await User.findOneAndDelete({ email: userEmail });
 
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      sendResponse(res, 404, null, "User not found.");
+      return;
     }
 
-    return res.status(200).json({ message: "User Account deleted" });
+    sendResponse(res, 200, user, "User profile deleted successfully.");
   } catch (error) {
-    return res.status(500).json({ message: "Internal server error." });
+    sendResponse(res, 500, null, error.message);
   }
 }
 
@@ -38,14 +41,13 @@ async function isOnline(req, res) {
     const user = await User.findOne({ email: userEmail });
 
     if (!user) {
-      return res.status(404).json({ message: "No user found." });
+      sendResponse(res, 404, null, "User not found.");
+      return;
     }
 
-    return res
-      .status(200)
-      .json({ message: "Status received", data: user.isOnline });
+    sendResponse(res, 200, user.isOnline, "User online status received.");
   } catch (error) {
-    return res.status(500).json({ message: "Internal server error." });
+    sendResponse(res, 500, null, error.message);
   }
 }
 
@@ -55,7 +57,8 @@ async function changeOnlineStatus(req, res) {
     const user = await User.findOne({ email: userEmail });
 
     if (!user) {
-      return res.status(404).json({ message: "No user found." });
+      sendResponse(res, 404, null, "User not found.");
+      return;
     }
 
     if (user.isOnline === "Online") {
@@ -66,9 +69,9 @@ async function changeOnlineStatus(req, res) {
 
     await user.save();
 
-    return res.status(200).json({ message: "User Status Updated", data: user });
+    sendResponse(res, 200, user, "User status updated.");
   } catch (error) {
-    return res.status(500).json({ message: "Internal server error." });
+    sendResponse(res, 500, null, error.message);
   }
 }
 
@@ -79,12 +82,13 @@ async function getUserById(req, res) {
     const user = await User.findById(userId);
 
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      sendResponse(res, 404, null, "User not found.");
+      return;
     }
 
-    return res.status(200).json({ message: "User found", data: user });
+    sendResponse(res, 200, user, "User profile found.");
   } catch (error) {
-    return res.status(500).json({ message: "Internal server error." });
+    sendResponse(res, 500, null, error.message);
   }
 }
 
@@ -93,14 +97,13 @@ async function getLoggedInUser(req, res) {
     const user = req.user;
 
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      sendResponse(res, 404, null, "User not found.");
+      return;
     }
 
-    return res
-      .status(200)
-      .json({ message: "Logged-in user found", data: user });
+    sendResponse(res, 200, user, "User profile found.");
   } catch (error) {
-    return res.status(500).json({ message: "Internal server error." });
+    sendResponse(res, 500, null, error.message);
   }
 }
 
@@ -112,19 +115,17 @@ async function setUserDescription(req, res) {
     const user = await User.findOne({ email: userEmail });
 
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      sendResponse(res, 404, null, "User not found.");
+      return;
     }
 
     user.description = description;
 
     await user.save();
 
-    return res
-      .status(200)
-      .json({ message: "Description updated successfully", data: user });
+    sendResponse(res, 200, user, "User profile updated.");
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: "Internal server error" });
+    sendResponse(res, 500, null, error.message);
   }
 }
 
@@ -143,16 +144,13 @@ async function updateUser(req, res) {
     });
 
     if (!updatedUser) {
-      return res.status(404).json({ message: "User not found" });
+      sendResponse(res, 404, null, "User not found.");
+      return;
     }
 
-    res
-      .status(200)
-      .json({ message: "User updated successfully", data: updatedUser });
+    sendResponse(res, 200, updatedUser, "User profile updated.");
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Internal Server Error", error: error.message });
+    sendResponse(res, 500, null, error.message);
   }
 }
 

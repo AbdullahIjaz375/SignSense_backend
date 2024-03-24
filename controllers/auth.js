@@ -1,9 +1,7 @@
-const express = require("express");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
-const multer = require("multer");
-const isAuth = require("../middleware/isAuth");
+const sendResponse = require("../utils/responseFormatter");
 
 async function signUp(req, res) {
   const { email, name, password, accountType, signLanguagePreference } =
@@ -13,7 +11,8 @@ async function signUp(req, res) {
     const existingUser = await User.findOne({ email });
 
     if (existingUser) {
-      return res.status(400).json({ message: "Email is already taken." });
+      sendResponse(res, 400, null, "Email already in use.");
+      return;
     }
 
     const defaultProfilePic = "/images/default-profile-pic.jpg";
@@ -36,13 +35,13 @@ async function signUp(req, res) {
       expiresIn: "14w",
     });
 
-    res.status(200).json({
-      message: "User created successfully.",
-      data: { User: newUser.toObject(), token },
-    });
+    // Exclude password from the response
+    const userResponse = { ...newUser._doc, password: undefined, token };
+
+    sendResponse(res, 200, userResponse, 'User registered successfully.');
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Internal server error." });
+    sendResponse(res, 500, null, error.message);
   }
 }
 
@@ -53,7 +52,8 @@ async function login(req, res) {
     const foundUser = await User.findOne({ email });
 
     if (!foundUser) {
-      return res.status(401).json({ error: "Invalid credentials" });
+      sendResponse(res, 401, null, "Invalid credentials.");
+      return;
     }
 
     const isPasswordMatch = await bcrypt.compare(password, foundUser.password);
@@ -65,10 +65,10 @@ async function login(req, res) {
         { expiresIn: "14w" }
       );
 
-      res.status(200).json({
-        message: "Login successful",
-        data: { User: foundUser, token },
-      });
+      // Exclude password from the response
+      const userResponse = { ...foundUser._doc, password: undefined, token, };
+
+      sendResponse(res, 200, userResponse, 'User logged in successfully.');
     } else {
       res.status(401).json({ error: "Invalid password" });
     }
