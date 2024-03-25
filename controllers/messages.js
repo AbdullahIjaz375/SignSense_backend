@@ -38,12 +38,14 @@ async function sendMessage(req, res) {
       }
     }
 
+    // Create the message in the database
     const newMessage = await Message.create({
       sender: senderId,
       content: message,
       chatId: chat._id,
     });
 
+    // Add the message to the chat
     chat.messages.push(newMessage);
     await chat.save();
 
