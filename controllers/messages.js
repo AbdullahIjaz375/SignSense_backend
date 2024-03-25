@@ -19,7 +19,6 @@ async function sendMessage(req, res) {
         return res.status(404).json({ message: "Chat not found" });
       }
     } else {
-      // Find users by their IDs instead of emails
       const receivers = await User.find({ _id: { $in: receiverIds } });
       if (!receivers || receivers.length !== receiverIds.length) {
         return res

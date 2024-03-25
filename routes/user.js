@@ -26,4 +26,6 @@ router.patch(
   userController.updateUser
 );
 
+router.get("/search-user", isAuth, userController.searchUser);
+
 module.exports = router;

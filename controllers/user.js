@@ -154,6 +154,30 @@ async function updateUser(req, res) {
   }
 }
 
+async function searchUser(req, res) {
+  try {
+    const userName = req.query.userName;
+
+    const users = await User.find({
+      name: { $regex: userName, $options: "i" },
+    });
+
+    if (!users || users.length === 0) {
+      sendResponse(
+        res,
+        404,
+        null,
+        "No users found matching the given criteria."
+      );
+      return;
+    }
+
+    sendResponse(res, 200, users, "User profiles retrieved successfully.");
+  } catch (error) {
+    sendResponse(res, 500, null, error.message);
+  }
+}
+
 module.exports = {
   getUser,
   deleteUser,
@@ -163,4 +187,5 @@ module.exports = {
   getLoggedInUser,
   setUserDescription,
   updateUser,
+  searchUser,
 };
