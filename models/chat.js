@@ -32,6 +32,11 @@ const chatSchema = new mongoose.Schema({
         required: true,
         default: false,
       },
+      isAslMessage: {
+        type: Boolean,
+        required: true,
+        default: false,
+      },
     },
   ],
   chatPhoto: {
