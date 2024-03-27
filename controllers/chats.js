@@ -73,20 +73,27 @@ async function loadAllChats(req, res) {
         .json({ message: "This user is not part of any chats yet." });
     }
 
-    const formattedChats = chats.map((chat) => ({
-      chatId: chat._id,
-      chatName: chat.chatName,
-      chatPhoto: chat.chatPhoto,
-      latestMessage:
-        chat.messages.length > 0
+    const formattedChats = chats.map((chat) => {
+      const latestMessage = chat.messages.length > 0 ? chat.messages[0] : null;
+
+      return {
+        chatId: chat._id,
+        chatName: chat.chatName,
+        chatPhoto: chat.chatPhoto,
+        latestMessage: latestMessage
           ? {
-              content: chat.messages[chat.messages.length - 1].content,
-              time: chat.messages[chat.messages.length - 1].time,
-              isVoiceMessage:
-                chat.messages[chat.messages.length - 1].isVoiceMessage,
+              content: latestMessage.content,
+              time: latestMessage.time,
+              isVoiceMessage: latestMessage.isVoiceMessage
+                ? latestMessage.isVoiceMessage
+                : false,
+              isAslMessage: latestMessage.isAslMessage
+                ? latestMessage.isVoiceMessage
+                : false,
             }
           : null,
-    }));
+      };
+    });
 
     res.json({
       message: "All chats for this user returned",

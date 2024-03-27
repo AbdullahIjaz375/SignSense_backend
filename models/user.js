@@ -20,6 +20,10 @@ const userSchema = new Schema(
       type: String,
       required: true,
     },
+    phone: {
+      type: String,
+      default: "",
+    },
     profilePic: {
       type: String,
       default: "/images/default-profile-photo.png",

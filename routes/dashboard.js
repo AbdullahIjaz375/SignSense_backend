@@ -4,7 +4,7 @@ const isAuth = require("../middleware/isAuthMiddleware");
 
 const dashboardController = require("../controllers/dashboard");
 
-router.post("/add-friend", dashboardController.addFriend);
+router.post("/add-friend", isAuth, dashboardController.addFriend);
 
 router.get("/load-friends", dashboardController.loadFriends);
 

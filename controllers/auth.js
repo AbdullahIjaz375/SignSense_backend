@@ -5,7 +5,7 @@ const sendResponse = require("../utils/responseFormatter");
 const bucket = require("../utils/firebaseAdmin");
 
 async function signUp(req, res) {
-  const { email, name, password, accountType, signLanguagePreference } =
+  const { email, name, password, accountType, signLanguagePreference, phone } =
     req.body;
 
   try {
@@ -34,6 +34,7 @@ async function signUp(req, res) {
       signLanguagePreference:
         accountType === "2" ? null : signLanguagePreference,
       profilePic: profilePic,
+      phone: phone,
     });
 
     await newUser.save();

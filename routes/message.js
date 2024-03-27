@@ -18,4 +18,6 @@ router.post("/delete", messageController.deleteMessage);
 
 router.post("/convert-to-asl/:id", messageController.convertToAsl);
 
+router.post("/convert-to-text/:id", messageController.convertToText);
+
 module.exports = router;

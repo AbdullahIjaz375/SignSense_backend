@@ -94,7 +94,9 @@ async function getUserById(req, res) {
 
 async function getLoggedInUser(req, res) {
   try {
-    const user = req.user;
+    const userId = req.user.userId;
+
+    const user = await User.findById(userId);
 
     if (!user) {
       sendResponse(res, 404, null, "User not found.");

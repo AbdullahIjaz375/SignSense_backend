@@ -26,10 +26,11 @@ async function loadFriends(req, res) {
 
 async function addFriend(req, res) {
   try {
-    const { userEmail, friendEmail } = req.body;
+    const { friendId } = req.body;
+    const userId = req.user.userId;
 
-    const user = await User.findOne({ email: userEmail });
-    const friend = await User.findOne({ email: friendEmail });
+    const user = await User.findById(userId);
+    const friend = await User.findById(friendId);
 
     if (!user || !friend) {
       return res.status(404).json({ message: "User or friend not found." });
@@ -44,9 +45,10 @@ async function addFriend(req, res) {
 
     return res.status(200).json({
       message: "Friend added successfully.",
-      data: friend,
+      data: user,
     });
   } catch (error) {
+    console.error("Error adding friend:", error);
     return res.status(500).json({ message: "Internal server error." });
   }
 }

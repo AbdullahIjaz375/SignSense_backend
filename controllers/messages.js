@@ -2,6 +2,7 @@ const Chat = require("../models/chat");
 const User = require("../models/user");
 const Message = require("../models/message");
 const { aslSigns } = require("../utils/AslSigns");
+const inverseMapping = require("../utils/inverseMapping");
 
 async function sendMessage(req, res) {
   try {
@@ -184,9 +185,57 @@ const convertToAsl = async (req, res) => {
   }
 };
 
+async function convertToText(req, res) {
+  try {
+    const { id } = req.params;
+
+    const completeMessage = await Message.findById(id);
+
+    if (!completeMessage) {
+      return res.status(404).json({ message: "Message not found" });
+    }
+
+    // Split content using regular expression to handle consecutive spaces
+    const urls = completeMessage.content.trim().split(/\s+/);
+    const characters = [];
+    let previousWasSpace = false;
+
+    for (const url of urls) {
+      if (!url) continue;
+
+      if (inverseMapping[url]) {
+        if (previousWasSpace) {
+          characters.push(inverseMapping[url].toUpperCase());
+        } else {
+          characters.push(inverseMapping[url]);
+        }
+        previousWasSpace = false;
+      } else {
+        characters.push(" ");
+        previousWasSpace = true;
+      }
+    }
+
+    const textMessage = characters.join("").toLowerCase();
+
+    completeMessage.content = textMessage;
+    await completeMessage.save();
+
+    return res
+      .status(200)
+      .json({ message: "Message converted to text", data: textMessage });
+  } catch (error) {
+    console.error("Error converting URLs to text:", error);
+    return res
+      .status(500)
+      .json({ message: "Internal Server Error", error: error.message });
+  }
+}
+
 module.exports = {
   sendMessage,
   updateMessage,
   deleteMessage,
   convertToAsl,
+  convertToText,
 };
