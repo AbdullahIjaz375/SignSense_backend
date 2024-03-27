@@ -189,37 +189,43 @@ async function convertToText(req, res) {
   try {
     const { id } = req.params;
 
+    // Assuming Message is a model from your database (e.g., MongoDB model)
     const completeMessage = await Message.findById(id);
 
     if (!completeMessage) {
       return res.status(404).json({ message: "Message not found" });
     }
 
-    // Split content using regular expression to handle consecutive spaces
-    const urls = completeMessage.content.trim().split(/\s+/);
+    // Adjusted regex to correctly handle sequences of three spaces
+    const urls = completeMessage.content
+      .trim()
+      .split(/(?<=\S)( +)(?=\S)|((?<=\S) {3}(?=\S))/);
     const characters = [];
-    let previousWasSpace = false;
+    let isFirstCharacter = true; // Flag to handle capitalization of the first character
 
     for (const url of urls) {
-      if (!url) continue;
+      if (!url) continue; // Skip empty strings
 
-      if (inverseMapping[url]) {
-        if (previousWasSpace) {
-          characters.push(inverseMapping[url].toUpperCase());
-        } else {
-          characters.push(inverseMapping[url]);
-        }
-        previousWasSpace = false;
-      } else {
+      if (url === "   ") {
+        // Detected a word separator, add a space to the output
         characters.push(" ");
-        previousWasSpace = true;
+      } else if (inverseMapping[url.trim()]) {
+        // Found a valid mapping, add the corresponding character
+        let character = inverseMapping[url.trim()];
+        if (isFirstCharacter) {
+          characters.push(character.toUpperCase()); // Capitalize the first character
+          isFirstCharacter = false;
+        } else {
+          characters.push(character.toLowerCase()); // Subsequent characters are lowercase
+        }
+      } else {
+        console.log(`URL '${url}' does not have a corresponding character.`);
       }
     }
 
-    const textMessage = characters.join("").toLowerCase();
-
-    completeMessage.content = textMessage;
-    await completeMessage.save();
+    const textMessage = characters.join("");
+    completeMessage.content = textMessage; // Update the message content with the converted text
+    await completeMessage.save(); // Save the updated message back to the database
 
     return res
       .status(200)

@@ -55,10 +55,11 @@ async function addFriend(req, res) {
 
 async function removeFriend(req, res) {
   try {
-    const { userEmail, friendEmail } = req.body;
+    const { friendId } = req.body;
+    const userId = req.user.userId;
 
-    const user = await User.findOne({ email: userEmail });
-    const friend = await User.findOne({ email: friendEmail });
+    const user = await User.findById(userId);
+    const friend = await User.findById(friendId);
 
     if (!user || !friend) {
       return res.status(404).json({ message: "User or friend not found." });
