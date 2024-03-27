@@ -8,3 +8,6 @@ package-lock.json
 
 # Ignore node_modules folder
 node_modules/
+
+# Ignore Google Cloud private key files
+signsense-backend-firebase-adminsdk-*.json
