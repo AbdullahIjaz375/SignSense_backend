@@ -23,6 +23,9 @@ async function signUp(req, res) {
         ? req.file.firebaseUrl
         : defaultProfilePicUrl;
 
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
     const newUser = new User({
       email: email,
       name: name,
