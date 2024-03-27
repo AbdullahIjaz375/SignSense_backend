@@ -55,7 +55,7 @@ async function deleteChat(req, res) {
 
 async function loadAllChats(req, res) {
   try {
-    const userId = req.query.userId;
+    const userId = req.user.userId;
 
     const chats = await Chat.find({ users: userId })
       .populate({
@@ -93,6 +93,7 @@ async function loadAllChats(req, res) {
       data: formattedChats,
     });
   } catch (error) {
+    console.error("Error loading chats:", error);
     return res
       .status(500)
       .json({ message: "Internal Server Error", error: error.message });
