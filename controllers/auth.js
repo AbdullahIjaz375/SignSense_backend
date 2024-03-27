@@ -25,12 +25,11 @@ async function signUp(req, res) {
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
-    password = hashedPassword;
 
     const newUser = new User({
       email: email,
       name: name,
-      password: password,
+      password: hashedPassword,
       accountType: accountType,
       signLanguagePreference:
         accountType === "2" ? null : signLanguagePreference,
