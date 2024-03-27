@@ -62,10 +62,7 @@ async function login(req, res) {
       return;
     }
 
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
-    const isPasswordMatch = await bcrypt.compare(hashedPassword, foundUser.password);
+    const isPasswordMatch = await bcrypt.compare(password, foundUser.password);
 
     if (isPasswordMatch) {
       const token = jwt.sign(
