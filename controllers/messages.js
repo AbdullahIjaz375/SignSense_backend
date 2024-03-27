@@ -146,9 +146,13 @@ const convertToAsl = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const completeMessages = await Message.findById(id);
+    const completeMessage = await Message.findById(id);
 
-    const message = completeMessages.content.toUpperCase();
+    if (!completeMessage) {
+      return res.status(404).json({ message: "Message not found" });
+    }
+
+    const message = completeMessage.content.toUpperCase();
 
     const aslMessageUrls = [];
 
@@ -165,16 +169,16 @@ const convertToAsl = async (req, res) => {
 
     const content = aslMessageUrls.join(" ");
 
-    const newAslMessage = await Message.create({
-      content: content,
-      isAslMessage: true,
-      sender: completeMessages.sender,
-      chat: completeMessages.chat,
-    });
+    await Message.updateOne(
+      { _id: id },
+      { $set: { content: content, isAslMessage: true } }
+    );
+
+    const updatedMessage = await Message.findById(id);
 
     res.json({
       message: "Message converted to ASL successfully",
-      data: newAslMessage,
+      data: updatedMessage,
     });
   } catch (error) {
     console.error("Error converting message to ASL:", error);
