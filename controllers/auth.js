@@ -29,7 +29,7 @@ async function signUp(req, res) {
     const newUser = new User({
       email: email,
       name: name,
-      password: password,
+      password: hashedPassword,
       accountType: accountType,
       signLanguagePreference:
         accountType === "2" ? null : signLanguagePreference,
