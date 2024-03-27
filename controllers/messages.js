@@ -1,6 +1,7 @@
 const Chat = require("../models/chat");
 const User = require("../models/user");
 const Message = require("../models/message");
+const { aslSigns } = require("../utils/AslSigns");
 
 async function sendMessage(req, res) {
   try {
@@ -132,8 +133,11 @@ async function deleteMessage(req, res) {
   }
 }
 
+// async function convertToAsl(req, res) {}
+
 module.exports = {
   sendMessage,
   updateMessage,
   deleteMessage,
+  // convertToAsl,
 };
