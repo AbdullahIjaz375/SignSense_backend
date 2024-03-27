@@ -24,6 +24,11 @@ const messageSchema = new mongoose.Schema({
     ref: "Chat",
     required: true,
   },
+  isAslMessage: {
+    type: Boolean,
+    required: true,
+    default: false,
+  },
 });
 
 module.exports = mongoose.model("Message", messageSchema);

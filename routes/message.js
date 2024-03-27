@@ -7,7 +7,7 @@ const uploadToFirebase = require("../middleware/UploadMiddleware");
 
 router.post(
   "/send",
-  multerMiddleware.single("chatPhoto"),
+  multerMiddleware.single("voiceMessage"),
   uploadToFirebase,
   messageController.sendMessage
 );
@@ -15,5 +15,7 @@ router.post(
 router.post("/update", messageController.updateMessage);
 
 router.post("/delete", messageController.deleteMessage);
+
+router.post("/convert-to-asl/:id", messageController.convertToAsl);
 
 module.exports = router;
