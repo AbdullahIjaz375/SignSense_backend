@@ -10,11 +10,16 @@ const messageSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  isVoiceMessage: {
+    type: Boolean,
+    required: true,
+    default: false,
+  },
   time: {
     type: Date,
     default: Date.now,
   },
-  chatId: {
+  chat: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Chat",
     required: true,

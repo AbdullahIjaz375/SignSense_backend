@@ -1,7 +1,9 @@
 const express = require("express");
 const router = express.Router();
-const isAuth = require("../middleware/isAuth");
-const { upload } = require("../index");
+const isAuth = require("../middleware/isAuthMiddleware");
+
+const multerMiddleware = require("../middleware/MulterMiddleware");
+const uploadToFirebase = require("../middleware/UploadMiddleware");
 
 const userController = require("../controllers/user");
 
@@ -22,7 +24,8 @@ router.post("/set-description", isAuth, userController.setUserDescription);
 router.patch(
   "/update-user",
   isAuth,
-  upload.single("profilePic"),
+  multerMiddleware.single("profilePic"),
+  uploadToFirebase,
   userController.updateUser
 );
 

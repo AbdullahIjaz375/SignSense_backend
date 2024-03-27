@@ -27,6 +27,11 @@ const chatSchema = new mongoose.Schema({
         type: Date,
         default: Date.now,
       },
+      isVoiceMessage: {
+        type: Boolean,
+        required: true,
+        default: false,
+      },
     },
   ],
   chatPhoto: {

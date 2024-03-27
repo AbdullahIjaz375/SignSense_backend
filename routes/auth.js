@@ -1,12 +1,17 @@
 const express = require("express");
-const jwt = require("jsonwebtoken");
 const router = express.Router();
 
-const { upload } = require("../index");
+const multerMiddleware = require("../middleware/MulterMiddleware");
+const uploadToFirebase = require("../middleware/UploadMiddleware");
 
 const authController = require("../controllers/auth");
 
-router.post("/sign-up", upload.single("profilePic"), authController.signUp);
+router.post(
+  "/sign-up",
+  multerMiddleware.single("profilePic"),
+  uploadToFirebase,
+  authController.signUp
+);
 
 router.post("/login", authController.login);
 

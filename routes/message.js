@@ -1,9 +1,16 @@
 const express = require("express");
 const router = express.Router();
 const messageController = require("../controllers/messages");
-const { upload } = require("../index");
 
-router.post("/send", upload.single("chatPhoto"), messageController.sendMessage);
+const multerMiddleware = require("../middleware/MulterMiddleware");
+const uploadToFirebase = require("../middleware/UploadMiddleware");
+
+router.post(
+  "/send",
+  multerMiddleware.single("chatPhoto"),
+  uploadToFirebase,
+  messageController.sendMessage
+);
 
 router.post("/update", messageController.updateMessage);
 

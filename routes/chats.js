@@ -1,8 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const chatController = require("../controllers/chats");
-const isAuth = require("../middleware/isAuth");
-const { upload } = require("../index");
+const isAuth = require("../middleware/isAuthMiddleware");
+
+const multerMiddleware = require("../middleware/MulterMiddleware");
+const uploadToFirebase = require("../middleware/UploadMiddleware");
 
 router.get("/load-chat/:chatId", chatController.loadChat);
 
@@ -14,10 +16,12 @@ router.get("/search-chat", chatController.searchChat);
 
 router.post("/create-chat/:receiverId", isAuth, chatController.createChat);
 
+// Updated to use multerMiddleware and uploadToFirebase
 router.post(
   "/create-group-chat",
   isAuth,
-  upload.single("chatPhoto"),
+  multerMiddleware.single("chatPhoto"),
+  uploadToFirebase,
   chatController.createGroupChat
 );
 

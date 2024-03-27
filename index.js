@@ -3,13 +3,14 @@ const express = require("express");
 const mongoose = require("mongoose");
 const path = require("path");
 const multer = require("multer");
-const http = require("http"); // Require http module for Socket.io
+const http = require("http");
 // const { initializeSocket } = require("./middleware/SocketMiddleware"); // Import the socket middleware
+const multerMiddleware = require("./middleware/MulterMiddleware");
+const uploadToFirebase = require("./middleware/UploadMiddleware");
 
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Connect to MongoDB
 mongoose
   .connect(
     `mongodb+srv://${process.env.MONGODB_USERNAME}:${process.env.MONGODB_PASSWORD}@signsense.gwc86sr.mongodb.net/dev`
@@ -21,27 +22,10 @@ mongoose
     console.error("Error connecting to MongoDB:", error);
   });
 
-// Middleware to parse JSON
 app.use(express.json());
 
-// Middleware to serve static files from the public directory
 app.use(express.static(path.join(__dirname, "public")));
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, "./public/uploads"));
-  },
-  filename: function (req, file, cb) {
-    const name = Date.now() + "-" + file.originalname;
-    cb(null, name);
-  },
-});
-
-const upload = multer({ storage: storage });
-
-module.exports.upload = upload;
-
-// Create HTTP server
 const server = http.createServer(app);
 
 // Initialize Socket.io middleware

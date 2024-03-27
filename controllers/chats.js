@@ -64,7 +64,7 @@ async function loadAllChats(req, res) {
       })
       .populate({
         path: "messages",
-        options: { sort: { time: -1 }, limit: 1 }, // Limit to only the latest message
+        options: { sort: { time: -1 }, limit: 1 },
       });
 
     if (chats.length === 0) {
@@ -82,6 +82,8 @@ async function loadAllChats(req, res) {
           ? {
               content: chat.messages[chat.messages.length - 1].content,
               time: chat.messages[chat.messages.length - 1].time,
+              isVoiceMessage:
+                chat.messages[chat.messages.length - 1].isVoiceMessage,
             }
           : null,
     }));
@@ -190,7 +192,8 @@ async function createGroupChat(req, res) {
     const senderId = req.user.userId;
 
     const { chatName, receiverIds } = req.body;
-    const chatPhoto = req.file.path;
+    const chatPhoto =
+      req.file.firebaseUrl && req.file ? req.file.firebaseUrl : null;
 
     if (!chatName || !chatPhoto) {
       return res

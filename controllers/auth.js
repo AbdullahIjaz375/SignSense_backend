@@ -2,6 +2,7 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
 const sendResponse = require("../utils/responseFormatter");
+const bucket = require("../utils/firebaseAdmin");
 
 async function signUp(req, res) {
   const { email, name, password, accountType, signLanguagePreference } =
@@ -15,9 +16,12 @@ async function signUp(req, res) {
       return;
     }
 
-    const defaultProfilePic = "/images/default-profile-pic.jpg";
+    const defaultProfilePicUrl = `https://storage.googleapis.com/${bucket.name}/images/default-profile-pic.jpg`;
 
-    const profilePic = req.file ? req.file.path : defaultProfilePic;
+    const profilePic =
+      req.file && req.file.firebaseUrl
+        ? req.file.firebaseUrl
+        : defaultProfilePicUrl;
 
     const newUser = new User({
       email: email,
@@ -38,13 +42,12 @@ async function signUp(req, res) {
     // Exclude password from the response
     const userResponse = { ...newUser._doc, password: undefined, token };
 
-    sendResponse(res, 200, userResponse, 'User registered successfully.');
+    sendResponse(res, 200, userResponse, "User registered successfully.");
   } catch (error) {
     console.error(error);
     sendResponse(res, 500, null, error.message);
   }
 }
-
 async function login(req, res) {
   try {
     const { email, password } = req.body;
@@ -65,10 +68,9 @@ async function login(req, res) {
         { expiresIn: "14w" }
       );
 
-      // Exclude password from the response
-      const userResponse = { ...foundUser._doc, password: undefined, token, };
+      const userResponse = { ...foundUser._doc, password: undefined, token };
 
-      sendResponse(res, 200, userResponse, 'User logged in successfully.');
+      sendResponse(res, 200, userResponse, "User logged in successfully.");
     } else {
       res.status(401).json({ error: "Invalid password" });
     }
