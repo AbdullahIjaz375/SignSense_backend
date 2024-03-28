@@ -136,8 +136,6 @@ async function updateUser(req, res) {
     const userId = req.user.userId;
     const updates = req.body;
 
-    console.log(updates);
-
     delete updates.userId;
     delete updates.friends;
 

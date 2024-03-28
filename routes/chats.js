@@ -16,14 +16,7 @@ router.get("/search-chat", chatController.searchChat);
 
 router.post("/create-chat/:receiverId", isAuth, chatController.createChat);
 
-// Updated to use multerMiddleware and uploadToFirebase
-router.post(
-  "/create-group-chat",
-  isAuth,
-  multerMiddleware.single("chatPhoto"),
-  uploadToFirebase,
-  chatController.createGroupChat
-);
+router.post("/create-group-chat", isAuth, chatController.createGroupChat);
 
 router.get("/get-chat-data", chatController.getChatData);
 

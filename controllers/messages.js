@@ -157,28 +157,22 @@ const convertToAsl = async (req, res) => {
 
     for (let i = 0; i < message.length; i++) {
       const character = message[i];
-      if (character === " ") {
-        aslMessageUrls.push(" ");
-      } else if (aslSigns.hasOwnProperty(character)) {
+      if (character !== " " && aslSigns.hasOwnProperty(character)) {
         aslMessageUrls.push(aslSigns[character].image);
-      } else {
+      } else if (character !== " ") {
         console.log(`Character '${character}' not found in ASL signs.`);
       }
     }
 
-    // Update the message in the database with the stringified content
-    completeMessage.content = JSON.stringify(aslMessageUrls);
-    completeMessage.isAslMessage = true;
-
+    // No longer updating the message in the database
+    // completeMessage.content = JSON.stringify(aslMessageUrls);
+    // completeMessage.isAslMessage = true;
     // await completeMessage.save();
 
-    // Send the response with the content as an array
+    // Send the response with the content as an array of URLs only
     res.json({
       message: "Message converted to ASL successfully",
-      data: {
-        ...completeMessage.toObject(),
-        content: aslMessageUrls, // directly using the array
-      },
+      data: aslMessageUrls, // Returning only the array of URLs
     });
   } catch (error) {
     console.error("Error converting message to ASL:", error);

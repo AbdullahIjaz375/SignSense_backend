@@ -57,6 +57,7 @@ async function loadAllChats(req, res) {
   try {
     const userId = req.user.userId;
 
+    // Fetching all chats that involve the user, populating user details and the latest message
     const chats = await Chat.find({ users: userId })
       .populate({
         path: "users",
@@ -64,7 +65,7 @@ async function loadAllChats(req, res) {
       })
       .populate({
         path: "messages",
-        options: { sort: { time: -1 }, limit: 1 },
+        options: { sort: { time: -1 }, limit: 1 }, // Ensuring the latest message is fetched
       });
 
     if (chats.length === 0) {
@@ -73,6 +74,7 @@ async function loadAllChats(req, res) {
         .json({ message: "This user is not part of any chats yet." });
     }
 
+    // Formatting each chat with the latest message details
     const formattedChats = chats.map((chat) => {
       const latestMessage = chat.messages.length > 0 ? chat.messages[0] : null;
 
@@ -88,13 +90,14 @@ async function loadAllChats(req, res) {
                 ? latestMessage.isVoiceMessage
                 : false,
               isAslMessage: latestMessage.isAslMessage
-                ? latestMessage.isVoiceMessage
-                : false,
+                ? latestMessage.isAslMessage
+                : false, // Corrected the conditional check for isAslMessage
             }
           : null,
       };
     });
 
+    // Returning all formatted chats for the user
     res.json({
       message: "All chats for this user returned",
       data: formattedChats,
@@ -199,16 +202,17 @@ async function createGroupChat(req, res) {
   try {
     const senderId = req.user.userId;
 
-    const { chatName, receiverIds } = req.body;
-    const chatPhoto =
-      req.file.firebaseUrl && req.file ? req.file.firebaseUrl : null;
+    // Extracting chatName, receiverIds, and chatPhoto directly from the request body
+    const { chatName, receiverIds, chatPhoto } = req.body;
 
+    // Validating chatName and chatPhoto presence
     if (!chatName || !chatPhoto) {
       return res
         .status(400)
         .json({ error: "Chat name and chat photo are required" });
     }
 
+    // Validating receiverIds as an array with at least two elements
     if (!Array.isArray(receiverIds) || receiverIds.length < 2) {
       return res.status(400).json({
         error:
@@ -216,6 +220,7 @@ async function createGroupChat(req, res) {
       });
     }
 
+    // Checking if all user IDs exist
     const users = await User.find({ _id: { $in: receiverIds } });
     if (users.length !== receiverIds.length) {
       return res
@@ -223,15 +228,10 @@ async function createGroupChat(req, res) {
         .json({ error: "One or more provided user IDs do not exist" });
     }
 
+    // Adding the sender to the list of chat participants
     receiverIds.push(senderId);
 
-    const existingChat = await Chat.findOne({ users: { $all: receiverIds } });
-    if (existingChat) {
-      return res
-        .status(400)
-        .json({ error: "Chat already exists for this set of users" });
-    }
-
+    // Checking for existing chats with the same users
     const existingChatsWithSameUsers = await Chat.findOne({
       users: { $all: receiverIds, $size: receiverIds.length },
     });
@@ -241,21 +241,25 @@ async function createGroupChat(req, res) {
         .json({ error: "Chat already exists with the same set of users" });
     }
 
+    // Creating the new chat document
     const newChat = new Chat({
-      chatName: chatName,
+      chatName,
       users: receiverIds,
-      chatPhoto: chatPhoto,
+      chatPhoto, // Using the chatPhoto URL directly from the request
     });
 
     await newChat.save();
 
+    // Preparing user IDs for the response, excluding the sender
     const responseReceiverIds = receiverIds.filter((id) => id !== senderId);
 
+    // Sending response with chat creation details
     res.status(200).json({
       message: "Group chat created successfully",
       data: { chatName, users: responseReceiverIds, chatPhoto },
     });
   } catch (error) {
+    console.error("Error creating group chat:", error);
     res
       .status(500)
       .json({ message: "Internal Server Error", error: error.message });
