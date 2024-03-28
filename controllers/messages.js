@@ -170,7 +170,7 @@ const convertToAsl = async (req, res) => {
     completeMessage.content = JSON.stringify(aslMessageUrls);
     completeMessage.isAslMessage = true;
 
-    await completeMessage.save();
+    // await completeMessage.save();
 
     // Send the response with the content as an array
     res.json({
@@ -226,7 +226,7 @@ async function convertToText(req, res) {
 
     // Assuming you want to update the message content with the converted text
     completeMessage.content = textMessage;
-    await completeMessage.save();
+    // await completeMessage.save();
 
     return res
       .status(200)
