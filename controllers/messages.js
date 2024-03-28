@@ -146,11 +146,13 @@ async function deleteMessage(req, res) {
 const convertToAsl = async (req, res) => {
   try {
     const { id } = req.params;
+    let completeMessage = await Message.findById(id);
 
-    const completeMessages = await Message.findById(id);
+    if (!completeMessage) {
+      return res.status(404).json({ message: "Message not found" });
+    }
 
-    const message = completeMessages.content.toUpperCase();
-
+    const message = completeMessage.content.toUpperCase();
     const aslMessageUrls = [];
 
     for (let i = 0; i < message.length; i++) {
@@ -164,18 +166,19 @@ const convertToAsl = async (req, res) => {
       }
     }
 
-    const content = aslMessageUrls.join(" ");
+    // Update the message in the database with the stringified content
+    completeMessage.content = JSON.stringify(aslMessageUrls);
+    completeMessage.isAslMessage = true;
 
-    const newAslMessage = await Message.create({
-      content: content,
-      isAslMessage: true,
-      sender: completeMessages.sender,
-      chat: completeMessages.chat,
-    });
+    await completeMessage.save();
 
+    // Send the response with the content as an array
     res.json({
       message: "Message converted to ASL successfully",
-      data: newAslMessage,
+      data: {
+        ...completeMessage.toObject(),
+        content: aslMessageUrls, // directly using the array
+      },
     });
   } catch (error) {
     console.error("Error converting message to ASL:", error);
@@ -195,33 +198,33 @@ async function convertToText(req, res) {
       return res.status(404).json({ message: "Message not found" });
     }
 
-    // Split content using regular expression to handle consecutive spaces
-    const urls = completeMessage.content.trim().split(/(\s+)/);
+    // Assuming the content is stored as a stringified array
+    const urlsArray = JSON.parse(completeMessage.content);
+
     const characters = [];
-    let previousWasSpace = false;
+    let isFirstCharacter = true;
 
-    for (const url of urls) {
-      if (!url) continue;
-
-      if (url === "   ") {
-        // If the URL is a space sequence, it means there was a consecutive space
+    for (const url of urlsArray) {
+      if (url === " ") {
+        // Directly add a space for " " elements in the array
         characters.push(" ");
-        previousWasSpace = true;
+        isFirstCharacter = true; // Next character should be capitalized as it's the start of a new word
       } else if (inverseMapping[url]) {
-        if (previousWasSpace) {
-          characters.push(inverseMapping[url].toUpperCase());
-        } else {
-          characters.push(inverseMapping[url]);
-        }
-        previousWasSpace = false;
+        // Add the mapped character, uppercase if it's the first character of a word
+        characters.push(
+          isFirstCharacter
+            ? inverseMapping[url].toUpperCase()
+            : inverseMapping[url].toLowerCase()
+        );
+        isFirstCharacter = false; // Subsequent characters are not the first in a word
       } else {
-        characters.push(" ");
-        previousWasSpace = false;
+        console.log(`URL '${url}' does not have a corresponding character.`);
       }
     }
 
-    const textMessage = characters.join("").toLowerCase();
+    const textMessage = characters.join("");
 
+    // Assuming you want to update the message content with the converted text
     completeMessage.content = textMessage;
     await completeMessage.save();
 
