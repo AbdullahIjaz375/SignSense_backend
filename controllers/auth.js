@@ -16,7 +16,7 @@ async function signUp(req, res) {
       return;
     }
 
-    const defaultProfilePicUrl = `https://storage.googleapis.com/${bucket.name}/images/default-user-image.jpg?alt=media`;
+    const defaultProfilePicUrl = `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/images%2Fdefault-user-image.jpg?alt=media`;
 
     const profilePic =
       req.file && req.file.firebaseUrl
