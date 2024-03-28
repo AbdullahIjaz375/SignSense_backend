@@ -1,32 +1,58 @@
 const bucket = require("../utils/firebaseAdmin");
 
 const inverseMapping = {
-  [`https://storage.googleapis.com/${bucket.name}/ASL/A.png`]: "A",
-  [`https://storage.googleapis.com/${bucket.name}/ASL/B.png`]: "B",
-  [`https://storage.googleapis.com/${bucket.name}/ASL/C.png`]: "C",
-  [`https://storage.googleapis.com/${bucket.name}/ASL/D.png`]: "D",
-  [`https://storage.googleapis.com/${bucket.name}/ASL/E.png`]: "E",
-  [`https://storage.googleapis.com/${bucket.name}/ASL/F.png`]: "F",
-  [`https://storage.googleapis.com/${bucket.name}/ASL/G.png`]: "G",
-  [`https://storage.googleapis.com/${bucket.name}/ASL/H.png`]: "H",
-  [`https://storage.googleapis.com/${bucket.name}/ASL/I.png`]: "I",
-  [`https://storage.googleapis.com/${bucket.name}/ASL/J.png`]: "J",
-  [`https://storage.googleapis.com/${bucket.name}/ASL/K.png`]: "K",
-  [`https://storage.googleapis.com/${bucket.name}/ASL/L.png`]: "L",
-  [`https://storage.googleapis.com/${bucket.name}/ASL/M.png`]: "M",
-  [`https://storage.googleapis.com/${bucket.name}/ASL/N.png`]: "N",
-  [`https://storage.googleapis.com/${bucket.name}/ASL/O.png`]: "O",
-  [`https://storage.googleapis.com/${bucket.name}/ASL/P.png`]: "P",
-  [`https://storage.googleapis.com/${bucket.name}/ASL/Q.png`]: "Q",
-  [`https://storage.googleapis.com/${bucket.name}/ASL/R.png`]: "R",
-  [`https://storage.googleapis.com/${bucket.name}/ASL/S.png`]: "S",
-  [`https://storage.googleapis.com/${bucket.name}/ASL/T.png`]: "T",
-  [`https://storage.googleapis.com/${bucket.name}/ASL/U.png`]: "U",
-  [`https://storage.googleapis.com/${bucket.name}/ASL/V.png`]: "V",
-  [`https://storage.googleapis.com/${bucket.name}/ASL/W.png`]: "W",
-  [`https://storage.googleapis.com/${bucket.name}/ASL/X.png`]: "X",
-  [`https://storage.googleapis.com/${bucket.name}/ASL/Y.png`]: "Y",
-  [`https://storage.googleapis.com/${bucket.name}/ASL/Z.png`]: "Z",
+  [`https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/ASL/A.png?alt=media`]:
+    "A",
+  [`https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/ASL/B.png?alt=media`]:
+    "B",
+  [`https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/ASL/C.png?alt=media`]:
+    "C",
+  [`https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/ASL/D.png?alt=media`]:
+    "D",
+  [`https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/ASL/E.png?alt=media`]:
+    "E",
+  [`https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/ASL/F.png?alt=media`]:
+    "F",
+  [`https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/ASL/G.png?alt=media`]:
+    "G",
+  [`https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/ASL/H.png?alt=media`]:
+    "H",
+  [`https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/ASL/I.png?alt=media`]:
+    "I",
+  [`https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/ASL/J.png?alt=media`]:
+    "J",
+  [`https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/ASL/K.png?alt=media`]:
+    "K",
+  [`https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/ASL/L.png?alt=media`]:
+    "L",
+  [`https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/ASL/M.png?alt=media`]:
+    "M",
+  [`https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/ASL/N.png?alt=media`]:
+    "N",
+  [`https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/ASL/O.png?alt=media`]:
+    "O",
+  [`https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/ASL/P.png?alt=media`]:
+    "P",
+  [`https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/ASL/Q.png?alt=media`]:
+    "Q",
+  [`https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/ASL/R.png?alt=media`]:
+    "R",
+  [`https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/ASL/S.png?alt=media`]:
+    "S",
+  [`https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/ASL/T.png?alt=media`]:
+    "T",
+  [`https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/ASL/U.png?alt=media`]:
+    "U",
+  [`https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/ASL/V.png?alt=media`]:
+    "V",
+  [`https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/ASL/W.png?alt=media`]:
+    "W",
+  [`https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/ASL/X.png?alt=media`]:
+    "X",
+  [`https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/ASL/Y.png?alt=media`]:
+    "Y",
+  [`https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/ASL/Z.png?alt=media`]:
+    "Z",
 };
 
 module.exports = inverseMapping;

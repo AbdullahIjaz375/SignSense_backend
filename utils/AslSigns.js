@@ -1,32 +1,84 @@
 const bucket = require("../utils/firebaseAdmin");
 
 const aslSigns = {
-  A: { image: `https://storage.googleapis.com/${bucket.name}/ASL/A.png` },
-  B: { image: `https://storage.googleapis.com/${bucket.name}/ASL/B.png` },
-  C: { image: `https://storage.googleapis.com/${bucket.name}/ASL/C.png` },
-  D: { image: `https://storage.googleapis.com/${bucket.name}/ASL/D.png` },
-  E: { image: `https://storage.googleapis.com/${bucket.name}/ASL/E.png` },
-  F: { image: `https://storage.googleapis.com/${bucket.name}/ASL/F.png` },
-  G: { image: `https://storage.googleapis.com/${bucket.name}/ASL/G.png` },
-  H: { image: `https://storage.googleapis.com/${bucket.name}/ASL/H.png` },
-  I: { image: `https://storage.googleapis.com/${bucket.name}/ASL/I.png` },
-  J: { image: `https://storage.googleapis.com/${bucket.name}/ASL/J.png` },
-  K: { image: `https://storage.googleapis.com/${bucket.name}/ASL/K.png` },
-  L: { image: `https://storage.googleapis.com/${bucket.name}/ASL/L.png` },
-  M: { image: `https://storage.googleapis.com/${bucket.name}/ASL/M.png` },
-  N: { image: `https://storage.googleapis.com/${bucket.name}/ASL/N.png` },
-  O: { image: `https://storage.googleapis.com/${bucket.name}/ASL/O.png` },
-  P: { image: `https://storage.googleapis.com/${bucket.name}/ASL/P.png` },
-  Q: { image: `https://storage.googleapis.com/${bucket.name}/ASL/Q.png` },
-  R: { image: `https://storage.googleapis.com/${bucket.name}/ASL/R.png` },
-  S: { image: `https://storage.googleapis.com/${bucket.name}/ASL/S.png` },
-  T: { image: `https://storage.googleapis.com/${bucket.name}/ASL/T.png` },
-  U: { image: `https://storage.googleapis.com/${bucket.name}/ASL/U.png` },
-  V: { image: `https://storage.googleapis.com/${bucket.name}/ASL/V.png` },
-  W: { image: `https://storage.googleapis.com/${bucket.name}/ASL/W.png` },
-  X: { image: `https://storage.googleapis.com/${bucket.name}/ASL/X.png` },
-  Y: { image: `https://storage.googleapis.com/${bucket.name}/ASL/Y.png` },
-  Z: { image: `https://storage.googleapis.com/${bucket.name}/ASL/Z.png` },
+  A: {
+    image: `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/ASL/A.png?alt=media`,
+  },
+  B: {
+    image: `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/ASL/B.png?alt=media`,
+  },
+  C: {
+    image: `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/ASL/C.png?alt=media`,
+  },
+  D: {
+    image: `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/ASL/D.png?alt=media`,
+  },
+  E: {
+    image: `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/ASL/E.png?alt=media`,
+  },
+  F: {
+    image: `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/ASL/F.png?alt=media`,
+  },
+  G: {
+    image: `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/ASL/G.png?alt=media`,
+  },
+  H: {
+    image: `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/ASL/H.png?alt=media`,
+  },
+  I: {
+    image: `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/ASL/I.png?alt=media`,
+  },
+  J: {
+    image: `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/ASL/J.png?alt=media`,
+  },
+  K: {
+    image: `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/ASL/K.png?alt=media`,
+  },
+  L: {
+    image: `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/ASL/L.png?alt=media`,
+  },
+  M: {
+    image: `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/ASL/M.png?alt=media`,
+  },
+  N: {
+    image: `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/ASL/N.png?alt=media`,
+  },
+  O: {
+    image: `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/ASL/O.png?alt=media`,
+  },
+  P: {
+    image: `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/ASL/P.png?alt=media`,
+  },
+  Q: {
+    image: `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/ASL/Q.png?alt=media`,
+  },
+  R: {
+    image: `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/ASL/R.png?alt=media`,
+  },
+  S: {
+    image: `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/ASL/S.png?alt=media`,
+  },
+  T: {
+    image: `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/ASL/T.png?alt=media`,
+  },
+  U: {
+    image: `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/ASL/U.png?alt=media`,
+  },
+  V: {
+    image: `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/ASL/V.png?alt=media`,
+  },
+  W: {
+    image: `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/ASL/W.png?alt=media`,
+  },
+  X: {
+    image: `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/ASL/X.png?alt=media`,
+  },
+  Y: {
+    image: `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/ASL/Y.png?alt=media`,
+  },
+  Z: {
+    image: `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/ASL/Z.png?alt=media`,
+  },
 };
 
 module.exports = { aslSigns };
