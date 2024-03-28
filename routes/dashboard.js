@@ -8,6 +8,6 @@ router.post("/add-friend", isAuth, dashboardController.addFriend);
 
 router.get("/load-friends", dashboardController.loadFriends);
 
-router.post("/remove-friend", dashboardController.removeFriend);
+router.post("/remove-friend", isAuth, dashboardController.removeFriend);
 
 module.exports = router;
