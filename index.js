@@ -28,7 +28,6 @@ app.use(express.static(path.join(__dirname, "public")));
 
 const server = http.createServer(app);
 
-// Initialize Socket.io middleware
 // initializeSocket(server, app);
 
 // Routes

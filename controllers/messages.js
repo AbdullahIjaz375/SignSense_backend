@@ -233,10 +233,57 @@ async function convertToText(req, res) {
   }
 }
 
+// async function convertToSpeech(req, res) {
+//   try {
+//     const { id } = req.params;
+
+//     const message = await Message.findById(id);
+//   } catch (error) {
+//     res
+//       .status(500)
+//       .json({ message: "Internal Server Error", error: error.message });
+//   }
+// }
+
+const convertTextToAsl = async (req, res) => {
+  try {
+    const { text } = req.body;
+
+    if (!text) {
+      return res.status(400).json({ message: "Text is required" });
+    }
+
+    const message = text.toUpperCase();
+    const aslMessageUrls = [];
+
+    for (let i = 0; i < message.length; i++) {
+      const character = message[i];
+      if (character !== " " && aslSigns.hasOwnProperty(character)) {
+        aslMessageUrls.push(aslSigns[character].image);
+      } else if (character !== " ") {
+        console.log(`Character '${character}' not found in ASL signs.`);
+      }
+    }
+
+    // Send the response with the content as an array of URLs only
+    res.json({
+      message: "Text converted to ASL successfully",
+      data: aslMessageUrls, // Returning only the array of URLs
+    });
+  } catch (error) {
+    console.error("Error converting text to ASL:", error);
+    res
+      .status(500)
+      .json({ message: "Internal Server Error", error: error.message });
+  }
+};
+
 module.exports = {
   sendMessage,
   updateMessage,
   deleteMessage,
   convertToAsl,
   convertToText,
+  convertTextToAsl,
+  // convertToSpeech,
 };
