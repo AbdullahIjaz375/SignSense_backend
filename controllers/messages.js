@@ -2,7 +2,9 @@ const Chat = require("../models/chat");
 const User = require("../models/user");
 const Message = require("../models/message");
 const { aslSigns } = require("../utils/AslSigns");
-const inverseMapping = require("../utils/inverseMapping");
+const { pslSigns } = require("../utils/pslSigns");
+const inverseAslMapping = require("../utils/inverseAslMapping");
+const inversePslMapping = require("../utils/inversePslMapping");
 
 async function sendMessage(req, res) {
   try {
@@ -164,11 +166,6 @@ const convertToAsl = async (req, res) => {
       }
     }
 
-    // No longer updating the message in the database
-    // completeMessage.content = JSON.stringify(aslMessageUrls);
-    // completeMessage.isAslMessage = true;
-    // await completeMessage.save();
-
     // Send the response with the content as an array of URLs only
     res.json({
       message: "Message converted to ASL successfully",
@@ -203,12 +200,12 @@ async function convertToText(req, res) {
         // Directly add a space for " " elements in the array
         characters.push(" ");
         isFirstCharacter = true; // Next character should be capitalized as it's the start of a new word
-      } else if (inverseMapping[url]) {
+      } else if (inverseAslMapping[url]) {
         // Add the mapped character, uppercase if it's the first character of a word
         characters.push(
           isFirstCharacter
-            ? inverseMapping[url].toUpperCase()
-            : inverseMapping[url].toLowerCase()
+            ? inverseAslMapping[url].toUpperCase()
+            : inverseAslMapping[url].toLowerCase()
         );
         isFirstCharacter = false; // Subsequent characters are not the first in a word
       } else {
@@ -232,18 +229,6 @@ async function convertToText(req, res) {
       .json({ message: "Internal Server Error", error: error.message });
   }
 }
-
-// async function convertToSpeech(req, res) {
-//   try {
-//     const { id } = req.params;
-
-//     const message = await Message.findById(id);
-//   } catch (error) {
-//     res
-//       .status(500)
-//       .json({ message: "Internal Server Error", error: error.message });
-//   }
-// }
 
 const convertTextToAsl = async (req, res) => {
   try {
@@ -278,6 +263,73 @@ const convertTextToAsl = async (req, res) => {
   }
 };
 
+const convertToPsl = async (req, res) => {
+  try {
+    const { id } = req.params;
+    let completeMessage = await Message.findById(id);
+
+    if (!completeMessage) {
+      return res.status(404).json({ message: "Message not found" });
+    }
+
+    const message = completeMessage.content;
+    const pslMessageUrls = [];
+
+    for (let i = 0; i < message.length; i++) {
+      const character = message[i];
+      if (character !== " " && pslSigns.hasOwnProperty(character)) {
+        pslMessageUrls.push(pslSigns[character].image);
+      } else if (character !== " ") {
+        console.log(`Character '${character}' not found in PSL signs.`);
+      }
+    }
+
+    // Send the response with the content as an array of URLs only
+    res.json({
+      message: "Message converted to PSL successfully",
+      data: pslMessageUrls, // Returning only the array of URLs
+    });
+  } catch (error) {
+    console.error("Error converting message to PSL:", error);
+    res
+      .status(500)
+      .json({ message: "Internal Server Error", error: error.message });
+  }
+};
+
+const convertTextToPsl = async (req, res) => {
+  try {
+    const { text } = req.body;
+
+    if (!text) {
+      return res.status(400).json({ message: "Text is required" });
+    }
+
+    const message = text;
+    const pslMessageUrls = [];
+
+    for (let i = 0; i < message.length; i++) {
+      const character = message[i];
+      if (character !== " " && pslSigns.hasOwnProperty(character)) {
+        pslMessageUrls.push(pslSigns[character].image);
+      } else if (character !== " ") {
+        console.log(`Character '${character}' not found in PSL signs.`);
+      }
+    }
+
+    // Send the response with the content as an array of URLs only
+    res.json({
+      message: "Text converted to PSL successfully",
+      data: pslMessageUrls, // Returning only the array of URLs
+    });
+  } catch (error) {
+    console.error("Error converting text to PSL:", error);
+    res
+      .status(500)
+      .json({ message: "Internal Server Error", error: error.message });
+  }
+};
+
 module.exports = {
   sendMessage,
   updateMessage,
@@ -285,5 +337,6 @@ module.exports = {
   convertToAsl,
   convertToText,
   convertTextToAsl,
-  // convertToSpeech,
+  convertToPsl,
+  convertTextToPsl,
 };

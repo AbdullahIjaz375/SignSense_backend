@@ -1,4 +1,4 @@
-const bucket = require("../utils/firebaseAdmin");
+const bucket = require("./firebaseAdmin");
 
 const inverseMapping = {
   [`https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/ASL%2FA.png?alt=media`]:

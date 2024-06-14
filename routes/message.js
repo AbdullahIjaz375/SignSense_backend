@@ -22,8 +22,8 @@ router.post("/convert-text-to-asl", messageController.convertTextToAsl);
 
 router.post("/convert-to-text/:id", messageController.convertToText);
 
-// router.get("/convert-to-speech/:id", messageController.convertToSpeech);
+router.post("/convert-to-psl/:id", messageController.convertToPsl);
 
-// router.post("/convert-to-psl/:id", messageController.convertToPsl);
+router.post("/convert-text-to-psl", messageController.convertTextToPsl);
 
 module.exports = router;
