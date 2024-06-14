@@ -1,7 +1,6 @@
 # .gitignore
 
 # Ignore .env file
-.env
 
 # Ignore package-lock.json
 package-lock.json
@@ -11,3 +10,7 @@ node_modules/
 
 # Ignore Google Cloud private key files
 signsense-backend-firebase-adminsdk-*.json
+branch_structure.json
+temp_auto_push.bat
+temp_interactive_push.bat
+config.bat

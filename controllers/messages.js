@@ -2,7 +2,7 @@ const Chat = require("../models/chat");
 const User = require("../models/user");
 const Message = require("../models/message");
 const { aslSigns } = require("../utils/AslSigns");
-const { pslSigns } = require("../utils/pslSigns");
+const { pslSigns } = require("../utils/PslSigns");
 const inverseAslMapping = require("../utils/inverseAslMapping");
 const inversePslMapping = require("../utils/inversePslMapping");
 
